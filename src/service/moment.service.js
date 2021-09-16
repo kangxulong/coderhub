@@ -68,8 +68,9 @@ class momentService {
       console.log(error);
     }
 	}
-	async getMomentList(offset, size) {
-		const statement = `
+	async  getMomentList(offset, size) {
+    try {
+      const statement = `
       SELECT 
         m.id id,
         m.content content,
@@ -82,10 +83,13 @@ class momentService {
       FROM moment m
       LEFT JOIN users u ON m.user_id = u.id
       LIMIT ?,?;
-      GROUP BY m.id
     `;
 		const [result] = await connections.execute(statement, [offset, size]);
 		return result;
+    } catch (error) {
+      console.log(error);
+    }
+		
 	}
 	async update(content, momentId) {
 		const statement = `UPDATE moment SET content = ? WHERE id = ?;`;

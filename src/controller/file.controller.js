@@ -26,23 +26,22 @@ class FileController {
 		};
 	}
 	async savePictureInfo(ctx, next) {
-		const files = ctx.req.files;
-		const { id } = ctx.user;
-		const { momentId } = ctx.query;
-		console.log(momentId, id);
-
 		try {
+			const files = ctx.req.files;
+			const { id } = ctx.user;
+			const { momentId } = ctx.query;
+			console.log(momentId, id);
 			for (let file of files) {
 				const { filename, mimetype, size } = file;
 				console.log(filename, mimetype, size);
 				// 将信息存储到数据表中
 				await fileService.createPicture(filename, mimetype, size, id, momentId);
 			}
+
+			ctx.body = "动态配图上传成功";
 		} catch (error) {
 			console.log(error);
 		}
-
-		ctx.body = "动态配图上传成功";
 	}
 }
 

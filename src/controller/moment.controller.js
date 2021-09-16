@@ -25,6 +25,7 @@ class momentController {
 	async list(ctx, next) {
 		// 获取参数中的offset(第几页）和size（一页显示多少）
 		const { offset, size } = ctx.query;
+		console.log(offset, size);
 		// 数据库中查询
 		const result = await momentService.getMomentList(offset, size);
 		ctx.body = result;
@@ -66,30 +67,30 @@ class momentController {
 	}
 
 	async pictureInfo(ctx, next) {
-		console.log("获取动态图片");
-		let { filename } = ctx.params;
-		// 因为下面有对filename做处理，所以查询只能在filenam处理之前，否则查询不出结果
-		const pictureInfo = await fileService.getPictureByFilename(filename);
-
-		// 要求前端传入size参数，根据参数不同给出不同尺寸的图片
-		const { type } = ctx.query;
-		// type的类型为string
-		console.log(typeof(type));
-		const types = ["1280", "640","320"];
-		console.log(`typeSome${types.some(item=>item === type)}`)
 		try {
-			if (types.some(item => item === type)) {
+			console.log("获取动态图片");
+			let { filename } = ctx.params;
+			// 因为下面有对filename做处理，所以查询只能在filenam处理之前，否则查询不出结果
+			const pictureInfo = await fileService.getPictureByFilename(filename);
+
+			// 要求前端传入size参数，根据参数不同给出不同尺寸的图片
+			const { type } = ctx.query;
+			// type的类型为string
+			console.log(typeof type);
+			const types = ["1280", "640", "320"];
+			console.log(`typeSome${types.some((item) => item === type)}`);
+			if (types.some((item) => item === type)) {
 				console.log("拼接filename");
 				filename = filename + "-" + type;
 				console.log(`filename:${filename}`);
 			}
+			// 设置mimetype,不设置的话就会直接下载文件
+			ctx.response.set("content-type", pictureInfo.mimetype);
+
+			ctx.body = fs.createReadStream(`${PICTURE_PATH}/${filename}`);
 		} catch (error) {
 			console.log(error);
 		}
-		// 设置mimetype,不设置的话就会直接下载文件
-		ctx.response.set("content-type", pictureInfo.mimetype);
-
-		ctx.body = fs.createReadStream(`${PICTURE_PATH}/${filename}`);
 	}
 }
 

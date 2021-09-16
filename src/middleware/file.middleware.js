@@ -5,19 +5,20 @@ const multer = require("koa-multer");
 const { AVATAR_PATH, PICTURE_PATH } = require("../constants/file-path");
 
 const avatarUpload = multer({
-	dest: AVATAR_PATH,
+	dest: AVATAR_PATH
 });
 
 const avatarHandler = avatarUpload.single("avatar");
 
 const pictureUpload = multer({
-	dest: PICTURE_PATH,
+	dest: PICTURE_PATH
 });
 
 const pictureHandler = pictureUpload.array("picture");
 
 const pictureResize = async (ctx, next) => {
 	try {
+		console.log('执行照片压缩');
 		const files = ctx.req.files;
 		for (let file of files) {
 			const destPath = path.join(file.destination, file.filename);
@@ -37,5 +38,5 @@ const pictureResize = async (ctx, next) => {
 module.exports = {
 	avatarHandler,
 	pictureHandler,
-	pictureResize,
+	pictureResize
 };

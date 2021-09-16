@@ -33,6 +33,7 @@ const verifyLogin = async (ctx, next) => {
 };
 
 const verifyAuth = async (ctx, next) => {
+	try {
 	console.log("验证授权token的middleware");
 	// 取出header中的authorization
 
@@ -43,16 +44,18 @@ const verifyAuth = async (ctx, next) => {
 	}
 	// authorization字符串中有多余的"Bearer "需要处理
 	const token = authorization.replace("Bearer ", "");
-	try {
 		// 验证token
 		console.log("进行验证");
+		// console.log(token);
 		const result = jwt.verify(token, PUBLIC_KEY, {
 			algorithms: ["RS256"],
 		});
+		console.log(result);
 		// 最好保存一下result
 		ctx.user = result;
 		await next();
 	} catch (err) {
+		console.log(err)
 		const error = new Error(errorTypes.UNAUTHORIZATION);
 		ctx.app.emit("error", error, ctx);
 	}
